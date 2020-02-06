@@ -70,43 +70,43 @@ IN THE SOFTWARE.
 		}
 	}
 
-	// The main replicate function
-	rplc8
-	replicate = function( elem, data, callback ) {
+	// The main function
+	rplc8 = function( elem, data, cb ) {
 
 		// If elem isn't a DOM element, then it has to be query selector string
 		if( ! ( elem instanceof HTMLElement ) ) {
-			if( typeof elem === "string" ) {
-				throw new Error( "replicate: invalid selector string" );
+			if( typeof elem !== "string" ) {
+				throw new Error( "rplc8: invalid selector string" );
 			}
-			let arr = document.querySelectorAll( elem ).toArray();
-			if( arr.length !== 1 ) {
-				throw new Error( "replicate: selector doesn't match exactly 1 element" );
+			let coll = document.querySelectorAll( elem );
+			if( coll.length !== 1 ) {
+				throw new Error( "rplc8: selector doesn't match exactly 1 element" );
 			}
-			elem = arr[ 0 ];
+			elem = coll[ 0 ];
 		}
-
-		mom.removeChild( elem );		// Take template out of the DOM.
 
 		let sib = elem.nextSibling;		// Might be null.
 		let mom = elem.parentNode;		// Almost certainly not null.
 		let clones = [];
 
-		let replace = function( data, cb ) {
+		mom.removeChild( elem );		// Take template out of the DOM.
 
-			// If it's a single object, put it into an array.
-			if( typeof data === "object" ) {
-				data = [ data ];
-			}
+		let update = function( data, cb ) {
 
-			// Ensure that data is an array
+			// Ensure that data is an array or object
 			if( ! ( data instanceof Array ) ) {
-				throw new Error( "replicate: replication data is not an array" );
+				// If it's a single object, put it into an array.
+				if( typeof data === "object" ) {
+					data = [ data ];
+				}
+				else {
+					throw new Error( "rplc8: Replication is neither array nor object." );
+				}
 			}
 
 			// Ensure that the first element in the array is an object.
-			if( data.length > 0 && typeof data[0] !== "object" ) {
-				throw new Error( "replicate: data array does not contain objects" );
+			if( data.length > 0 && typeof data[ 0 ] !== "object" ) {
+				throw new Error( "rplc8: Replication data array does not contain objects." );
 			}
 
 			// Remove any previously cloned and inserted elements.
@@ -124,17 +124,22 @@ IN THE SOFTWARE.
 				clones.push( e );
 				inject( e, d );					// Inject the data into the element.
 				if( cb ) {
-					cb( e, d, i );		// Let caller do stuff after each clone is created.
+					cb( e, d, i );				// Let caller do stuff after each clone is created.
 				}
 			}
 		}
 
-		let tpl = {
-			elem,
-			mom,
-			sib,
-			clones,
-			replace,
+		let clear = function() {
+			update( [] );
+		}
+
+		if( data ) {
+			update( data, cb );
+		}
+
+		return {
+			update,
+			clear,
 		};
 
 	};
