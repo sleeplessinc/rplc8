@@ -1,6 +1,6 @@
 {
   "name": "rplc8",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight support for replicating DOM elements with injected data.",
   "main": "rplc8.js",
   "scripts": {
