@@ -99,7 +99,7 @@ which works similarly to Array.splice():
 	r.splice( -1, 1 );		// remove 1 from end
 	r.splice( 0, 1, [ { ... } ] );	// replace first one with a new one
 
-And of couse, the splice() function takes callbacks too:
+And of course, the splice() function takes callbacks too:
 
 	r.splice( -2, 1, [ { ... }, { ... } ], callback );
 	// removes the next to last one and replaces with 2 new ones
