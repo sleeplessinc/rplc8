@@ -70,7 +70,6 @@ IN THE SOFTWARE.
 		}
 	}
 
-
 	// The main function
 	rplc8 = function( elem, data, cb ) {
 
@@ -91,7 +90,6 @@ IN THE SOFTWARE.
 		let clones = [];
 
 		mom.removeChild( elem );		// Take template out of the DOM.
-
 
 		let validate_data = function( data ) {
 			// Ensure that data is an array or object
@@ -114,9 +112,7 @@ IN THE SOFTWARE.
 			return data;
 		}
 
-
 		let obj = { };
-
 
 		let splice = function( index, remove_count, new_data, cb ) {
 
@@ -161,29 +157,23 @@ IN THE SOFTWARE.
 			return obj;
 		}
 
-
 		let append = function( data, cb ) {
 			return splice( clones.length, 0, data, cb );
 		}
-
 
 		let prepend = function( data, cb ) {
 			return splice( 0, 0, data, cb );
 		}
 
-
 		let update = function( data, cb ) {
 			return splice( 0, clones.length, data, cb );
 		}
-
 
 		let clear = function( index, count ) {
 			return splice( index || 0, count || clones.length );
 		}
 
-
 		update( data, cb );
-
 
 		obj.splice = splice;
 		obj.append = append;
