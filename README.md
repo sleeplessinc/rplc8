@@ -8,7 +8,7 @@ No dependencies.
 
 # Usage
 
-	<script src="rplct8.js"></script>
+	<script src="rplc8.js"></script>
 
 
 # Examples
@@ -19,17 +19,17 @@ Given this HTML:
 		Val is __val__
 	</div>
 
-Tie a rplct8 object to an element:
+Tie a rplc8 object to an element:
 
-	r = rplct8( "#myid" );
+	r = rplc8( "#myid" );
 
 Or instead of using a query selector string you can 
 just pass an actual element.  Note that in both cases,
 the element must actually be in the DOM:
 
-	r = rplct8( document.getElementById( "myid") );
+	r = rplc8( document.getElementById( "myid") );
 
-The rplct8() function removes the "template" element from
+The rplc8() function removes the "template" element from
 the dom.  The DIV with id of "myid" in this case.
 
 It returns an object that contains functions that you can
