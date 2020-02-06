@@ -1,49 +1,96 @@
 
 # rplc8
 
-Tie a rplct8 object to an element in the DOM
+Lightweight, browser based support for replicating DOM elements with injected data.
+
+No dependencies.
+
+
+# Usage
+
+	<script src="rplct8.js"></script>
+
+
+# Examples
+
+Given this HTML:
+
+	<div id="myid">
+		Val is __val__
+	</div>
+
+Tie a rplct8 object to an element:
 
 	r = rplct8( "#myid" );
 
 Or instead of using a query selector string you can 
-just pass an actual element.
-Note that in both cases, the element just actually be in
-the DOM:
+just pass an actual element.  Note that in both cases,
+the element must actually be in the DOM:
 
-	r.rplct8( document.getElementById( "myid") );
+	r = rplct8( document.getElementById( "myid") );
 
-When you have the rplct8 obj, then inject some data:
+The rplct8() function removes the "template" element from
+the dom.  The DIV with id of "myid" in this case.
 
-	r.update( [ { ... }, ... ] );
+It returns an object that contains functions that you can
+call to do things.
+To inject some data:
 
-If you provide a callback you'll get old replicate style callbacks:
+	r.update( { val: "foo" } );
 
-	r.update( mydata, ( elem, data, index ) {
+Your HTML should change to:
+
+	<div id="myid"> Val is foo </div>
+
+If instead of an object, you give it an array of objects:
+
+	r.update( [ { val: "foo" }, { val: "bar" } ] );
+
+Your HTML will change to:
+
+	<div id="myid"> Val is foo </div>
+	<div id="myid"> Val is bar </div>
+
+If you provide a callback you'll get old sleepless-replicate style callbacks:
+
+	r.update( mydata, ( elem, data, index ) => {
 		// ...
 	});
 
-You can reset the clones just like before:
+If you want to re-replicate with all new data, call update:
+
+	r.update( [ { val: "baz" }, { val: "qux" } ] );
+
+And you'll get new clones:
+
+	<div id="myid"> Val is baz </div>
+	<div id="myid"> Val is qux </div>
+
+You can clear the clones just like sleepless-replicate:
 
 	r.update( [] );
 
 Or you can call use the clear() function:
 
-	r.clear();
+	r.clear();			// remove everything
 
 Note that clear takes args too if you just want to remove some
 of the clones:
 
-	r.clear( index, remove_count );
+	r.clear( index, remove_count );	
+	r.clear( 0, 3 );	// remove the first 3
+	r.clear( index );	// remove everything starting from index
 
-Now the cool stuff!
+Now some cool stuff!
 There are these:
 
 	r.append( [ { ... }, ... ], callback )
-
 	r.prepend( [ { ... }, ... ], callback )
 
-And now the pièce de résistance is the all powerful splice(),
-which works basically like Array.splice():
+And of course, the callback is optional for both.
+
+And the pièce de résistance is the all powerful splice(),
+which works similarly like Array.splice():
 
 	r.splice( 0, 1 );		// remove 1 from beginning
 	r.splice( 0, 2 );		// remove 2 from beginning
@@ -55,8 +102,5 @@ And of couse, the splice() function takes callbacks too:
 
 	r.splice( -2, 1, [ { ... }, { ... } ], callback );
 	// removes the next to last one and replaces with 2 new ones
-
-
-
 
 
