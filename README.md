@@ -82,7 +82,8 @@ of the clones:
 	r.clear( index );	// remove everything starting from index
 
 Now some cool stuff!
-There are these:
+There are these to add 1 or more clones to the
+beginning or end:
 
 	r.append( [ { ... }, ... ], callback )
 	r.prepend( [ { ... }, ... ], callback )
@@ -90,7 +91,7 @@ There are these:
 And of course, the callback is optional for both.
 
 And the pièce de résistance is the all powerful splice(),
-which works similarly like Array.splice():
+which works similarly to Array.splice():
 
 	r.splice( 0, 1 );		// remove 1 from beginning
 	r.splice( 0, 2 );		// remove 2 from beginning
@@ -102,5 +103,24 @@ And of couse, the splice() function takes callbacks too:
 
 	r.splice( -2, 1, [ { ... }, { ... } ], callback );
 	// removes the next to last one and replaces with 2 new ones
+
+One last tasty morsel ... the callbacks take a 4th argument which
+is a function that you can use to update the clone to have new 
+data:
+
+	let data = { val: 1 };
+	let cb = function( e, d, i, refresh ) {
+		e.onclick = function() {
+			data.val += 1;
+			refresh( data, cb );
+		}
+	}
+	r.append( data, cb );
+
+If you click on this clone, it will increment the val,
+then reinject the data into the DOM and then reset the
+click handler.
+Note: This feature will probably be obsolete when mxu is
+incorporated into rplc8.
 
 

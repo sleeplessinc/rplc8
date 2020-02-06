@@ -148,7 +148,10 @@ IN THE SOFTWARE.
 					let i = index + n;
 					clones.splice( i, 0, clone );	// insert clone into array
 					if( cb ) {								// If call back function provided,
-						cb( clone, d, i );					// then call it.
+						// then call it with a refreshing function
+						cb( clone, d, i, function( new_data, cb ) {
+							splice( i, 1, new_data, cb );
+						});	
 					}
 					n += 1;
 				}
