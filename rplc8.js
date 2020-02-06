@@ -70,6 +70,7 @@ IN THE SOFTWARE.
 		}
 	}
 
+
 	// The main function
 	rplc8 = function( elem, data, cb ) {
 
@@ -91,8 +92,8 @@ IN THE SOFTWARE.
 
 		mom.removeChild( elem );		// Take template out of the DOM.
 
-		let update = function( data, cb ) {
 
+		let validate_data = function( data ) {
 			// Ensure that data is an array or object
 			if( ! ( data instanceof Array ) ) {
 				// If it's a single object, put it into an array.
@@ -100,7 +101,8 @@ IN THE SOFTWARE.
 					data = [ data ];
 				}
 				else {
-					throw new Error( "rplc8: Replication is neither array nor object." );
+					data = [];
+					//throw new Error( "rplc8: Replication is neither array nor object." );
 				}
 			}
 
@@ -109,38 +111,87 @@ IN THE SOFTWARE.
 				throw new Error( "rplc8: Replication data array does not contain objects." );
 			}
 
-			// Remove any previously cloned and inserted elements.
-			clones.forEach( clone => {
-				mom.removeChild( clone ); //remove(); // IE is so fuckin stupid.
-			});
-			clones = [];
+			return data;
+		}
 
-			// For each object in the data array, replicate the template
-			// by cloning it and injecting the data into it.
-			for( let i = 0 ; i < data.length ; i++ ) {
-				let d = data[ i ]				// Get the data src.
-				let e = elem.cloneNode( true )	// Clone the template.
-				mom.insertBefore( e, sib );		// Insert the clone into the dom.
-				clones.push( e );
-				inject( e, d );					// Inject the data into the element.
-				if( cb ) {
-					cb( e, d, i );				// Let caller do stuff after each clone is created.
+
+		let obj = { };
+
+
+		let splice = function( index, remove_count, new_data, cb ) {
+
+			if( index < 0 ) {
+				index = clones.length + index;
+			}
+			if( index > clones.length) {
+				index = clones.length;
+			}
+
+			let sib = clones[ index ] || null;
+
+			if( index < clones.length ) {
+				// remove the old clones
+				let n = 0;
+				while( n < remove_count && index < clones.length ) {
+					let clone = clones.splice( index, 1 )[ 0 ];
+					sib = clone.nextSibling;
+					mom.removeChild( clone );
+					n += 1;
 				}
 			}
+
+			// insert new clones if data provided
+			if( new_data ) {
+				data = validate_data( new_data );
+				let n = 0
+				while( n < data.length ) {
+					let d = data[ n ];						// Get data object from array.
+					let clone = elem.cloneNode( true );		// Clone template element and
+					inject( clone, d );						// inject the data.
+					mom.insertBefore( clone, sib );			// Insert it into the DOM
+					let i = index + n;
+					clones.splice( i, 0, clone );	// insert clone into array
+					if( cb ) {								// If call back function provided,
+						cb( clone, d, i );					// then call it.
+					}
+					n += 1;
+				}
+			}
+
+			return obj;
 		}
 
-		let clear = function() {
-			update( [] );
+
+		let append = function( data, cb ) {
+			return splice( clones.length, 0, data, cb );
 		}
 
-		if( data ) {
-			update( data, cb );
+
+		let prepend = function( data, cb ) {
+			return splice( 0, 0, data, cb );
 		}
 
-		return {
-			update,
-			clear,
-		};
+
+		let update = function( data, cb ) {
+			return splice( 0, clones.length, data, cb );
+		}
+
+
+		let clear = function( index, count ) {
+			return splice( index || 0, count || clones.length );
+		}
+
+
+		update( data, cb );
+
+
+		obj.splice = splice;
+		obj.append = append;
+		obj.prepend = prepend;
+		obj.update = update;
+		obj.clear = clear;
+
+		return obj;
 
 	};
 
